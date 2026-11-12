@@ -33,3 +33,11 @@ python chat.py --data data/topical_train.csv --message "What do you like about m
 
 The converter preserves conversation order and boundaries. Keep upstream validation/test splits separate when evaluating retrieval; do not index held-out responses and report that as generalisation. The historical CSV's exact provenance remains unknown.
 `prepare_data.py` was verified against the official training split (188,378 turns), and retrieval inference completed. This checks execution, not conversational quality.
+
+## Models and libraries
+
+The working `chat.py` implementation is a **TF-IDF retrieval model**, not a generative LLM. Python's `csv` module reads ordered conversation turns. `TfidfVectorizer(ngram_range=(1,2))` from **scikit-learn** represents prompts using word unigrams and bigrams. `cosine_similarity` compares the query with indexed prompts, and the response paired with the closest prompt is returned. Scores below 0.15 produce a fallback response.
+
+`prepare_data.py` uses Python `json`, `csv` and `pathlib` to convert official conversation JSON without mixing conversation boundaries. No neural-network training or paid API is required for retrieval.
+
+The separate historical **TensorFlow transformer-encoder** notebook explores embeddings and attention. Its decoder, end-to-end training and generation pipeline are unfinished. The retrieval implementation is a separate, runnable baseline and does not complete or validate that transformer.
